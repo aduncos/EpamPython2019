@@ -1,3 +1,5 @@
+"""
+
 Напишите реализацию функции atom, которая инкапсулирует некую переменную,
 предоставляя интерфейс для получения и изменения ее значения,
 таким образом, что это значение нельзя было бы получить или изменить
@@ -14,3 +16,37 @@ process_value - принимает в качестве аргументов ск
 	к хранимой переменной, обновляя ее значение (перезаписывая получившийся
 	результат) и возвращая получишееся итоговое значение.
 delete_value - удаляет значение
+
+"""
+
+def atom(var=None):
+    def get_value():
+        return var
+
+    def set_value(value):
+        nonlocal var
+        var = value
+        return var
+
+    def process_value(*functions):
+        nonlocal var
+        for function in functions:
+            var = function(var)
+        return var
+
+    def delete_value():
+        nonlocal var
+        del var
+
+    atom.get_value = get_value
+    atom.set_value = set_value
+    atom.process_value = process_value
+    atom.delete_value = delete_value
+    return atom
+
+if __name__ == "__main__":
+    func = atom("Hello!!!")
+    func.set_value([1,5,4,2,3])
+    func.process_value(sorted, enumerate, sorted)
+    print(func.get_value())
+    func.delete_value()
